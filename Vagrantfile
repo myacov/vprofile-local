@@ -8,7 +8,7 @@ Vagrant.configure("2") do |config|
     db01.vm.hostname = "db01"
     db01.vm.network "private_network", ip: "192.168.56.15"
     db01.vm.provider "virtualbox" do |vb|
-     vb.memory = "600"
+     vb.memory = "1024"
    end
 
   end
@@ -19,7 +19,7 @@ Vagrant.configure("2") do |config|
     mc01.vm.hostname = "mc01"
     mc01.vm.network "private_network", ip: "192.168.56.14"
     mc01.vm.provider "virtualbox" do |vb|
-     vb.memory = "600"
+     vb.memory = "1024"
    end
   end
   
@@ -29,7 +29,7 @@ Vagrant.configure("2") do |config|
   rmq01.vm.hostname = "rmq01"
     rmq01.vm.network "private_network", ip: "192.168.56.13"
     rmq01.vm.provider "virtualbox" do |vb|
-     vb.memory = "600"
+     vb.memory = "1024"
    end
   end
   
@@ -39,7 +39,7 @@ Vagrant.configure("2") do |config|
     app01.vm.hostname = "app01"
     app01.vm.network "private_network", ip: "192.168.56.12"
     app01.vm.provider "virtualbox" do |vb|
-     vb.memory = "800"
+     vb.memory = "1024"
    end
    end
    
@@ -51,7 +51,7 @@ Vagrant.configure("2") do |config|
   web01.vm.network "private_network", ip: "192.168.56.11"
   web01.vm.provider "virtualbox" do |vb|
      vb.gui = true
-     vb.memory = "800"
+     vb.memory = "1024"
    end
 end
   
