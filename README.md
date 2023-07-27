@@ -195,7 +195,7 @@ sudo systemctl restart memcached
     ```bash
         vi /etc/systemd/system/tomcat.service
     ```
-        - copy script:
+    copy script:
     ```bash
         [Unit]
         Description=Tomcat
@@ -221,50 +221,50 @@ sudo systemctl restart memcached
     ```
 2. CODE Build & Deploy application on Tomcat
     1. Download Source code
-    ```bash
-        git clone -b main https://github.com/myacov/vprofile-local.git
-    ```
+        ```bash
+            git clone -b main https://github.com/myacov/vprofile-local.git
+        ```
     2. Build code
-    ```bash
-        cd vprofile-local
-        mvn install
-    ```
-    2. Deploy artifact
-    ```bash
-        systemctl stop tomcat
-        rm -rf /usr/local/tomcat/webapps/ROOT*
-        cp target/vprofile-v2.war /usr/local/tomcat/webapps/ROOT.war
-        systemctl start tomcat
-    ```
+        ```bash
+            cd vprofile-local
+            mvn install
+        ```
+    3. Deploy artifact
+        ```bash
+            systemctl stop tomcat
+            rm -rf /usr/local/tomcat/webapps/ROOT*
+            cp target/vprofile-v2.war /usr/local/tomcat/webapps/ROOT.war
+            systemctl start tomcat
+        ```
 
 ### Nginx Setup
-  1. Login to the Nginx vm
-    ```bash
-        vagrant ssh web01
-    ```
-    2. Update OS & install Nginx
-    ```bash
-        sudo -i
-        apt update
-        apt upgrade -y
-        apt install nginx -y
-    ```
-    3. Create Nginx conf file with below content
-    ```bash
-        vi /etc/nginx/sites-available/vproapp
-    ```
-    4. Remove default nginx conf
-    ```bash
-        rm -rf /etc/nginx/sites-enabled/default
-    ```
-    5. Create link to activate website
-    ```bash
-        ln -s /etc/nginx/sites-available/vproapp /etc/nginx/sites-enabled/vproapp
-    ```
-    6. Restart Nginx
-    ```bash
-        systemctl restart nginx
-    ```
+1. Login to the Nginx vm
+```bash
+    vagrant ssh web01
+```
+2. Update OS & install Nginx
+```bash
+    sudo -i
+    apt update
+    apt upgrade -y
+    apt install nginx -y
+```
+3. Create Nginx conf file with below content
+```bash
+    vi /etc/nginx/sites-available/vproapp
+```
+4. Remove default nginx conf
+```bash
+    rm -rf /etc/nginx/sites-enabled/default
+```
+5. Create link to activate website
+```bash
+    ln -s /etc/nginx/sites-available/vproapp /etc/nginx/sites-enabled/vproapp
+```
+6. Restart Nginx
+```bash
+    systemctl restart nginx
+```
 
 
 
