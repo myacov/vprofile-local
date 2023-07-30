@@ -10,6 +10,7 @@ Vagrant.configure("2") do |config|
     db01.vm.provider "virtualbox" do |vb|
      vb.memory = "1024"
    end
+    db01.vm.provision "shell", path: "Automated/mysql.sh"  
 
   end
   
@@ -21,16 +22,18 @@ Vagrant.configure("2") do |config|
     mc01.vm.provider "virtualbox" do |vb|
      vb.memory = "1024"
    end
+    mc01.vm.provision "shell", path: "Automated/memcache.sh"  
   end
   
 ### RabbitMQ vm  ####
   config.vm.define "rmq01" do |rmq01|
     rmq01.vm.box = "eurolinux-vagrant/centos-stream-9"
   rmq01.vm.hostname = "rmq01"
-    rmq01.vm.network "private_network", ip: "192.168.56.13"
+    rmq01.vm.network "private_network", ip: "192.168.56.16"
     rmq01.vm.provider "virtualbox" do |vb|
      vb.memory = "1024"
    end
+    rmq01.vm.provision "shell", path: "Automated/rabbitmq.sh"  
   end
   
 ### tomcat vm ###
@@ -38,6 +41,7 @@ Vagrant.configure("2") do |config|
     app01.vm.box = "eurolinux-vagrant/centos-stream-9"
     app01.vm.hostname = "app01"
     app01.vm.network "private_network", ip: "192.168.56.12"
+    app01.vm.provision "shell", path: "Automated/tomcat.sh"  
     app01.vm.provider "virtualbox" do |vb|
      vb.memory = "1024"
    end
@@ -49,10 +53,12 @@ Vagrant.configure("2") do |config|
     web01.vm.box = "ubuntu/jammy64"
     web01.vm.hostname = "web01"
   web01.vm.network "private_network", ip: "192.168.56.11"
+#  web01.vm.network "public_network"
   web01.vm.provider "virtualbox" do |vb|
      vb.gui = true
      vb.memory = "1024"
    end
+  web01.vm.provision "shell", path: "Automated/nginx.sh"  
 end
-  
+
 end
