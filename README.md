@@ -1,95 +1,88 @@
-# vprofile-local
-## Objective: 
-Setup a web application stack locally.
-Dealing with multiple services.
-and finally automating this proccess by using IaC.
+# VProfile-Local
 
-## Architecture: 
-![Project diagram](images/proj2.jpg)
+## Objective:
+VProfile-Local is a web application stack designed for local development, aiming to handle multiple services. finally to automate the setup process using Infrastructure as Code (IaC).
 
-## The tools (the stack)
-| CHOSEN TOOL  | USE | WHY |
-| ------------- | ------------- | ------------- |
-| 🧊 VirtualBox  | Hypervisor for Virtualisation | Easy to use  |
-| **v** Vagrant  | Automation  | Lightweight  |
-| 🐧 Linux (Ubuntu) | OS | popular Linux distribution |
-| 🐧 Linux (centos9) | OS | popular Linux distribution |
-| ❇️ Nginx | Load Balancer  | Web Service |
-| 🐈 Apache tomcat | Application Server  | popular for java apps |
-| 🐇 RabbitMQ | Broker/Queuing Agent  |  |
-| ⏺️ Memcached | DB Caching  |  |
-|  MySQL Server | SQL Database  |  |
+## Architecture:
+![Project Architecture Diagram](images/proj2.jpg)
+
+## The Stack:
+| Tool           | Use                   | Why Choose It                 |
+| -------------- | --------------------- | ----------------------------- |
+| 🧊 VirtualBox  | Hypervisor for Virtualization | Easy to use           |
+| 🆅 Vagrant  | Automation            | Lightweight                   |
+| 🐧 Linux (Ubuntu) | OS                  | Popular Linux distribution   |
+| 🐧 Linux (CentOS 9) | OS                | Popular Linux distribution   |
+| 🌐 Nginx       | Load Balancer         | Web Service                  |
+| 🐈 Apache Tomcat | Application Server  | Popular for Java apps        |
+| 📨 RabbitMQ    | Broker/Queuing Agent  | For messaging tasks          |
+| Ⓜ️ Memcached   | DB Caching            | For database caching         |
+| 🐬 MySQL Server | SQL Database         | For data storage             |
 
 ## Prerequisites:
--	Computer with 8GB RAM and approximately 10GB free disk space, (for Linux in a virtual machine).
-- Oracle VM Virtualbox 
-- Vagrant 
-- Vagrant plugin - vagrant-hostmanager
-   > adds host name and an ip addres from the vagrant file to every VM hostfile (/etc/host)
+- Computer with at least 8GB RAM and approximately 10GB of free disk space (for running Linux in a virtual machine).
+- Oracle VM VirtualBox
+- Vagrant
+- Vagrant plugin - vagrant-hostmanager (Adds hostnames and IP addresses from the Vagrantfile to every VM hostfile, i.e., `/etc/hosts`).
 - Git bash
 
-## Creating the virtual machines using Vagrantfile
-1. Clone source code.
+## Getting Started:
+1. Clone the source code:
+   ```bash
+   git clone -b main https://github.com/myacov/vprofile-local.git
+   ```
 2. Bring up the virtual machines
-    ```bash
+   ```bash
     vagrant up
-    ```
+   ```
 
 ## Setup VMs
-### MYSQL Setup
-1. Login to the db vm
+### A. MYSQL Setup
+1. Login to the 'db01' VM:
     ```bash
     vagrant ssh db01
     ```
-2. Verify Hosts entry, if entries missing update the it with IP and hostnames
+2. Verify the hosts entry; if entries are missing, update them with the appropriate IP and hostnames:
     ```bash
     cat /etc/hosts
     ```
-3. Update OS with latest patches
+3. Update the OS with the latest patches:
     ```bash
     sudo yum update -y
     ```
-4. Set Repository
+4. Set up the repository:
     ```bash
     sudo yum install epel-release -y
     ```
-5. Install Maria DB Package
+5. Install MariaDB:
     ```bash
     sudo yum install git mariadb-server -y
     ```
-6. Starting & enabling mariadb-server
+6. Start and enable the MariaDB server:
     ```bash
     sudo systemctl start mariadb
     sudo systemctl enable mariadb
+    sudo systemctl status mariadb
     ```
-    > to check if active we can run : sudo systemctl status mariadb
-7. RUN mysql secure installation script
+7. Run the MySQL secure installation script:
     ```bash
     sudo mysql_secure_installation
     ```
-    > NOTE: Set db root password
-### Setup Database name and users.
-1. log in to the db
+    > NOTE: Set db root password Example password : admin123
+8. Setup Database name and users.
     ```bash
     mysql -u root -padmin123
     ```
-2. create database: "accounts"
-    ```sql
-    create database accounts;
-    ```
-3.  grant privileges to user admin (% = remote)
-    ```sql
-    grant all privileges on accounts.* TO 'admin'@'%' identified by 'admin123' ;
-    ```
-4. reload:
-    ```sql
-    FLUSH PRIVILEGES;
-    ```
-5. Exit
-    ```sql
-    exit;
-    ```
-### Download Source code & Initialize Database.
+
+grant privileges to user admin (% = remote)
+```sql
+sql>    create database accounts;
+sql>    grant all privileges on accounts.* TO 'admin'@'%' identified by 'admin123' ;
+sql>    FLUSH PRIVILEGES;
+sql>    exit;
+```
+
+9. Download Source code & Initialize Database.
 ```bash
 sudo -i
 git clone -b main https://github.com/myacov/vprofile-local.git
@@ -97,21 +90,21 @@ cd vprofile-local
 mysql -u root -padmin123 accounts < src/main/resources/db_backup.sql
 mysql -u root -padmin123 accounts
 ```
-sql>
-    ```
-    show tables;
-    ```
+```sql
+sql>    show tables;
+```
 
-### Restart mariadb-server
+10. Restart the MariaDB server:
 ```bash
 systemctl restart mariadb
 ```
-### Memcache Setup
-1. Login to the mc01 vm
+
+### B. Memcache Setup
+1. Login to the 'mc01' vm
     ```bash
     vagrant ssh mc01
     ```
-2. Install, start & enable memcache on port 11211
+2. Install, start, and enable Memcached on port 11211:
 ```bash
 sudo -i
 dnf install epel-release -y
@@ -120,26 +113,24 @@ systemctl start memcached
 systemctl enable memcached
 systemctl status memcached
 ```
-> allow to listen for connection from different VM (for tomcat)
+3. Allow listening for connections from different VMs (for Tomcat):
 ```bash 
 sed -i 's/127.0.0.1/0.0.0.0/g' /etc/sysconfig/memcached
-``` 
-```bash 
 sudo systemctl restart memcached
 ``` 
 
-### RabbitMQ Setup
+### C. RabbitMQ Setup
 1. Login to the RabbitMQ vm
 ```bash
     vagrant ssh rmq01
 ```
-2. Update OS and Set EPEL Repository
+2. Update the OS and set up the EPEL repository:
 ```bash
     sudo -i
     yum update -y
     yum install epel-release -y
 ```
-3. Install Dependencies and RabbitMQ repository
+3. Install Dependencies and RabbitMQ repository:
  ```bash
     dnf -y install centos-release-rabbitmq-38
 ```
@@ -153,7 +144,7 @@ sudo systemctl restart memcached
     systemctl enable rabbitmq-server
     systemctl status rabbitmq-server
 ```
-6. Specifically for Vprofile : create file and redirect output 
+6. For VProfile-specific configuration, create a file and redirect output:
  ```bash
     sh -c 'echo "[{rabbit, [{loopback_users, []}]}]." > /etc/rabbitmq/rabbitmq.config'
 ```
@@ -163,26 +154,26 @@ sudo systemctl restart memcached
     rabbitmqctl set_user_tags test administrator
     systemctl restart rabbitmq-server
 ```
-### Tomcat Setup
-1. Setting up Tomcat Service
+### D. Tomcat Setup
+1. **Setting up Tomcat Service**
     1. Login to the Tomcat vm
     ```bash
         vagrant ssh app01
     ```
-    2. Update OS
+    2. Update the OS:
     ```bash
         sudo yum update -y
     ```
-    3. Set Repository
+    3. Set up the repository:
     ```bash
         sudo yum install epel-release -y
     ```
-    4. Install Dependencies : openjdk11 git, wget and maven
+    4. Install Dependencies: OpenJDK 11, Git, Wget, and Maven:
     ```bash
         dnf -y install java-11-openjdk java-11-openjdk-devel
         dnf install git maven wget -y
     ```
-    5. Download & Tomcat Package
+    5. Download & Install Tomcat Package
     ```bash
         cd /tmp/
         wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.75/bin/apache-tomcat-9.0.75.tar.gz
@@ -191,11 +182,8 @@ sudo systemctl restart memcached
         cp -r /tmp/apache-tomcat-9.0.75/* /usr/local/tomcat/
         chown -R tomcat.tomcat /usr/local/tomcat
     ```
-    6. Setup systemctl command for tomcat
-    ```bash
-        vi /etc/systemd/system/tomcat.service
-    ```
-    copy script:
+    6. Setup systemctl command for Tomcat:
+        Copy and paste the following script to **tomcat.service** file (*path*= **/etc/systemd/system/tomcat.service**):
     ```bash
         [Unit]
         Description=Tomcat
@@ -213,23 +201,23 @@ sudo systemctl restart memcached
         [Install]
         WantedBy=multi-user.target
     ```
-    7. Reload systemd files then Start & Enable service
+    7. Reload systemd files, then start and enable the Tomcat service:
     ```bash
         systemctl daemon-reload
         systemctl start tomcat
         systemctl enable tomcat
     ```
-2. CODE Build & Deploy application on Tomcat
+2. **Building & Deploying the Application on Tomcat:**
     1. Download Source code
         ```bash
             git clone -b main https://github.com/myacov/vprofile-local.git
         ```
-    2. Build code
+    2. Build the code:
         ```bash
             cd vprofile-local
             mvn install
         ```
-    3. Deploy artifact
+    3. Deploy the artifact:
         ```bash
             systemctl stop tomcat
             rm -rf /usr/local/tomcat/webapps/ROOT*
@@ -237,39 +225,47 @@ sudo systemctl restart memcached
             systemctl start tomcat
         ```
 
-### Nginx Setup
+### E. Nginx Setup
 1. Login to the Nginx vm
 ```bash
     vagrant ssh web01
 ```
-2. Update OS & install Nginx
+2. Update the OS and install Nginx:
 ```bash
     sudo -i
     apt update
     apt upgrade -y
     apt install nginx -y
 ```
-3. Create Nginx conf file with below content
+3. Create an Nginx conf file and copy and paste the following script (*path*= **/etc/nginx/sites-available/vproapp**)::
 ```bash
-    vi /etc/nginx/sites-available/vproapp
+    upstream vproapp {
+      server app01:8080;
+    }
+    server {
+       listen 80;
+       location / {
+     proxy_pass http://vproapp;
+    }
+   }
 ```
-4. Remove default nginx conf
+4. Remove the default Nginx configuration link:
 ```bash
     rm -rf /etc/nginx/sites-enabled/default
 ```
-5. Create link to activate website
+5. Create a symbolic link to our configuration:
 ```bash
-    ln -s /etc/nginx/sites-available/vproapp /etc/nginx/sites-enabled/vproapp
+    ln -s /etc/nginx/sites-available/vproapp  /etc/nginx/sites-enabled/vproapp
 ```
-6. Restart Nginx
+6. Restart Nginx:
 ```bash
     systemctl restart nginx
 ```
 
 ## Automating this process - Provisioning
 
-In Automated Branch:
-
-including shell scripts for Vagrantfile to execute during Provision stage
+The automated branch includes shell scripts for the Vagrantfile to execute during the provisioning stage.
 
 
+## License:
+This project is licensed under the MIT License.
