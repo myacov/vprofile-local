@@ -1,24 +1,24 @@
 # vprofile-local
 ## Objective: 
+Setup a web application stack locally.
+Dealing with multiple services.
+and finally automating this proccess by using IaC.
 
+## Architecture: 
 ![Project diagram](images/proj2.jpg)
-## Desired Learning outcomes
-
 
 ## The tools (the stack)
 | CHOSEN TOOL  | USE | WHY |
 | ------------- | ------------- | ------------- |
-| 🧊 VirtualBox  | Virtualisation   | Easy to use  |
-| **v** Vagrant  | Automation   | Lightweight  |
+| 🧊 VirtualBox  | Hypervisor for Virtualisation | Easy to use  |
+| **v** Vagrant  | Automation  | Lightweight  |
 | 🐧 Linux (Ubuntu) | OS | popular Linux distribution |
 | 🐧 Linux (centos9) | OS | popular Linux distribution |
-|  Nginx | Load Balancer  | Web Service |
-|  Apache tomcat | Application Server  | popular for java apps |
-|  RabbitMQ | Broker/Queuing Agent  |  |
-|  Memcached | DB Caching  |  |
+| ❇️ Nginx | Load Balancer  | Web Service |
+| 🐈 Apache tomcat | Application Server  | popular for java apps |
+| 🐇 RabbitMQ | Broker/Queuing Agent  |  |
+| ⏺️ Memcached | DB Caching  |  |
 |  MySQL Server | SQL Database  |  |
-
-
 
 ## Prerequisites:
 -	Computer with 8GB RAM and approximately 10GB free disk space, (for Linux in a virtual machine).
@@ -266,11 +266,10 @@ sudo systemctl restart memcached
     systemctl restart nginx
 ```
 
-
-
 ## Automating this process - Provisioning
 
+In Automated Branch:
 
-
+including shell scripts for Vagrantfile to execute during Provision stage
 
 
